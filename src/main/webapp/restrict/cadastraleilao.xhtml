@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"                
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./../resources/main.xhtml">
+
+    <ui:define name="tarefas">
+        <p:fieldset legend="Página do Administrador">
+            <p:tabView id="tbv1" dynamic="true" cache="true">
+                <p:tab title="Cadastar Leilão">
+                    <h:form prependId="false" id="formLeilao">
+                        <p:growl id="msg0"/>
+                        <h:panelGrid columns="1" cellpadding="10" styleClass="panelGrid" id="grid0">
+                            <h:inputHidden id="idLeilao" value="#{leilaoMB.leilao.idLeilao}"/> 
+                            <h:outputLabel for="produto" value="Produto:"/>
+                            <p:inputText id="produto" size="40" value="#{leilaoMB.leilao.produto}"
+                                         onkeyup="this.value = this.value.toUpperCase()" required="true"
+                                         requiredMessage="O campo [Nome] é obrigatório."/>
+                            <h:outputLabel for="valorMin" value="Valor Mínimo:"/>
+                            <p:inputText id="valorMin" size="40" value="#{leilaoMB.leilao.valorMin}"
+                                         onkeyup="this.value = this.value.toUpperCase()" required="true"
+                                         requiredMessage="O campo [Nome] é obrigatório."/>
+
+                            <p:panel>
+                                <p:commandButton value="Salvar" action="#{leilaoMB.addLeilao()}"
+                                                 image="ui-icon ui-icon-disk" update="@form"/>
+                                <p:commandButton value="Cancelar" actionListener="#{leilaoMB.limpLeilao()}" 
+                                                 image="ui-icon ui-icon-close" update="@form"/>
+                            </p:panel>
+
+                        </h:panelGrid>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+
+            <h:form id="formtable">
+                <p:growl id="msg1"/>
+                <p:dataTable id="idTabela" var="leilao" value="#{leilaoMB.leiloes}"
+                             paginator="true" rows="3" emptyMessage="Nenhum Leilão Encontrado"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink}
+                             {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">Lista de Leilões</f:facet>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Produto"/>
+                        </f:facet>
+                        <h:outputText value="#{leilao.produto}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Valor Minímo"/>
+                        </f:facet>
+                        <h:outputText value="#{leilao.valorMin}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Ações"/>
+                        </f:facet>
+                        <p:commandButton value="Editar" image="ui-icon ui-icon-pencil"
+                                         process="@this" update=":tbv1:formLeilao">
+                            <f:setPropertyActionListener target="#{leilaoMB.leilao}"
+                                                         value="#{leilao}"/>
+                        </p:commandButton>
+                        <p:commandButton value="Encerrar" action="#{leilaoMB.deleteLeilao()}"
+                                         image="ui-icon ui-icon-close" update="@form">
+                            <f:setPropertyActionListener target="#{leilaoMB.leilao}"
+                                                         value="#{leilao}"/>
+                        </p:commandButton>
+
+                    </p:column>
+                </p:dataTable>
+            </h:form> 
+        </p:fieldset>
+
+        <p:fieldset legend="Lances">
+            <h:form id="formtable2">
+                <p:growl id="msg2"/>
+                <p:dataTable id="idTabela" var="lance" value="#{lanceMB.lances}"
+                             paginator="true" rows="10" emptyMessage="Nenhum Lance Encontrado"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink}
+                             {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+
+                    <f:facet name="header">Lista de Lances</f:facet>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Nome"/>
+                        </f:facet>
+                        <h:outputText value="#{lance.nome}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Valor Lance"/>
+                        </f:facet>
+                        <h:outputText value="#{lance.valorLance}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Ações"/>
+                        </f:facet>
+                        <p:commandButton value="Excluir" action="#{lanceMB.deleteLance()}"
+                                         image="ui-icon ui-icon-close" update="@form">
+                            <f:setPropertyActionListener target="#{lanceMB.lance}"
+                                                         value="#{lance}"/>
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </h:form> 
+        </p:fieldset>
+        
+           <p:fieldset legend="Vencedor">
+            <p:tabView id="tbv4" dynamic="true" cache="true">
+                <p:tab title="Cadastar Vencedor">
+                    <h:form prependId="false" id="formVencedor">
+                        <p:growl id="msg4"/>
+                        <h:panelGrid columns="1" cellpadding="10" styleClass="panelGrid" id="grid4">
+                            <h:inputHidden id="idVencedor" value="#{vencedorMB.vencedor.idVencedor}"/> 
+                            <h:outputLabel for="nomeVenc" value="Nome:"/>
+                            <p:inputText id="nomeVenc" size="40" value="#{vencedorMB.vencedor.nomeVenc}"
+                                         onkeyup="this.value = this.value.toUpperCase()" required="true"
+                                         requiredMessage="O campo [Nome] é obrigatório."/>
+                            <p:panel>
+                                <p:commandButton value="Salvar" action="#{vencedorMB.addVencedor()}"
+                                                 image="ui-icon ui-icon-disk" update="@form"/>
+                                <p:commandButton value="Cancelar" actionListener="#{vencedorMB.limpVencedor()}" 
+                                                 image="ui-icon ui-icon-close" update="@form"/>
+                            </p:panel>
+                        </h:panelGrid>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+            <h:form id="formtableVenc">
+                <p:growl id="msg5"/>
+                <p:dataTable id="idTabelaVenc" var="vencedor" value="#{vencedorMB.vencedores}"
+                             paginator="true" rows="3" emptyMessage="Leilão Não Encerrado"
+                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink}
+                             {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">Vencedor</f:facet>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Nome"/>
+                        </f:facet>
+                        <h:outputText value="#{vencedor.nomeVenc}"/>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="Ações"/>
+                        </f:facet>
+                        <p:commandButton value="Editar" image="ui-icon ui-icon-pencil"
+                                         process="@this" update=":tbv1:formLeilao">
+                            <f:setPropertyActionListener target="#{vencedorMB.vencedor}"
+                                                         value="#{vencedor}"/>
+                        </p:commandButton>
+                        <p:commandButton value="Excluir" action="#{vencedorMB.deleteVencedor()}"
+                                         image="ui-icon ui-icon-close" update="@form">
+                            <f:setPropertyActionListener target="#{vencedorMB.vencedor}"
+                                                         value="#{vencedor}"/>
+                        </p:commandButton>
+
+                    </p:column>
+                </p:dataTable>
+            </h:form> 
+        </p:fieldset>
+    </ui:define>
+</ui:composition>
